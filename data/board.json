@@ -195,23 +195,10 @@
    "teamSource": "auto",
    "createdAt": 1795479976833,
    "updatedAt": 1795530376833
-  },
-  "15c2a9c3-351a-4730-bbb7-c0cca0c28e66": {
-   "title": "Teste de sincronização entre navegadores",
-   "description": "",
-   "severity": "medium",
-   "type": "feature",
-   "status": "backlog",
-   "team": "product",
-   "teamSource": "auto",
-   "id": "15c2a9c3-351a-4730-bbb7-c0cca0c28e66",
-   "createdAt": 1795530385516,
-   "updatedAt": 1795530385516
   }
  },
  "columns": {
   "backlog": [
-   "15c2a9c3-351a-4730-bbb7-c0cca0c28e66",
    "45be7b4e-f871-4f30-9328-33516b8a969b",
    "73d65ba1-5637-45ff-b9dd-0e94961b2337",
    "ade5d6ec-e338-4c72-bcd6-8f3259960124"
@@ -239,5 +226,8 @@
    "5444499b-7d8c-471d-aac1-6c36816b554b"
   ]
  },
- "updatedAt": 1795530385516
+ "deleted": {
+  "15c2a9c3-351a-4730-bbb7-c0cca0c28e66": 1795530407062
+ },
+ "updatedAt": 1795530407062
 }
