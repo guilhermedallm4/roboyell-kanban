@@ -14,7 +14,7 @@ const REPO_ID = `${SYNC_TARGET.owner}/${SYNC_TARGET.repo}:${SYNC_TARGET.branch}`
 
 interface SyncMeta {
   repo: string;
-  /** sha of data/board.json we last read or wrote */
+  /** sha of board.json we last read or wrote */
   sha: string | null;
   /** serialized board as it is on GitHub at `sha` */
   synced: string | null;
@@ -56,7 +56,7 @@ interface Options {
 }
 
 /**
- * Keeps the local board (always saved in the browser) mirrored with data/board.json on GitHub.
+ * Keeps the local board (always saved in the browser) mirrored with board.json in the private data repository.
  * - Local edits are pushed after a short pause.
  * - The remote file is polled every 15 s and when the tab regains focus.
  * - If both sides changed, the boards are merged (see merge.ts) and the result is pushed.
@@ -144,7 +144,7 @@ export function useGitHubSync({ state, applySynced, author }: Options) {
     if (remote.sha === meta.current.sha) return;
 
     const remoteState = sanitizeState(remote.state);
-    if (!remoteState) throw new Error('data/board.json no GitHub está inválido.');
+    if (!remoteState) throw new Error('O board.json no GitHub está inválido.');
     const local = stateRef.current;
     const neverSynced = meta.current.sha === null;
     const clean = meta.current.synced === fingerprint(local);

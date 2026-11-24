@@ -1,16 +1,16 @@
 /**
- * Reads and writes the shared board as a JSON file in a (private) GitHub repository,
+ * Reads and writes the shared board as a JSON file in a private GitHub repository (separate from the public code),
  * through the REST "contents" API, authenticated with each person's own token.
  */
 import type { BoardState } from '../types';
 
-const [OWNER, REPO] = (import.meta.env.VITE_SYNC_REPO ?? 'guilhermedallm4/roboyell-kanban').split('/');
+const [OWNER, REPO] = (import.meta.env.VITE_SYNC_REPO ?? 'guilhermedallm4/roboyell-kanban-data').split('/');
 
 export const SYNC_TARGET = {
   owner: OWNER,
   repo: REPO,
   branch: import.meta.env.VITE_SYNC_BRANCH ?? 'main',
-  path: 'data/board.json',
+  path: 'board.json',
 };
 
 export const SYNC_FILE_URL = `https://github.com/${OWNER}/${REPO}/blob/${SYNC_TARGET.branch}/${SYNC_TARGET.path}`;

@@ -3,9 +3,6 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
-    # Board saves (data/board.json) must not redeploy the site.
-    paths-ignore:
-      - 'data/**'
   workflow_dispatch:
 
 permissions:

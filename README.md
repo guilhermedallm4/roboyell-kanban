@@ -3,7 +3,8 @@
 Quadro Kanban para organizar as tarefas dos projetos da Roboyell (KAyla). Usa a paleta e a tipografia de roboyell.com.
 
 - **Site:** https://guilhermedallm4.github.io/roboyell-kanban/ (publicado pelo GitHub Actions a cada push na `main`)
-- **Tarefas compartilhadas:** [`data/board.json`](data/board.json) neste mesmo repositório (privado)
+- **Código:** este repositório (público)
+- **Tarefas compartilhadas:** `board.json` no repositório **privado** [`guilhermedallm4/roboyell-kanban-data`](https://github.com/guilhermedallm4/roboyell-kanban-data). Só quem foi convidado para ele consegue ler ou gravar as tarefas.
 
 ## Como rodar localmente
 
@@ -31,7 +32,7 @@ Há dois modos, com as mesmas senhas:
 
 Em ambos: 12 h de sessão (30 dias com "Manter conectado"), 5 senhas erradas bloqueiam por 5 min, e trocar a senha encerra as sessões abertas. Dá para entrar com o usuário (`guilherme`), o primeiro nome ou o nome completo.
 
-**Importante sobre o Pages:** num site estático a tela de login roda no navegador de quem visita. As senhas não vazam (são longas e aleatórias, e só o hash é publicado), mas alguém com conhecimento técnico consegue pular a tela. Quem protege de verdade as tarefas é o repositório privado: sem um token com acesso a ele, ninguém lê nem grava `data/board.json`.
+**Importante sobre o Pages:** num site estático a tela de login roda no navegador de quem visita. As senhas não vazam (são longas e aleatórias, e só o hash é publicado), mas alguém com conhecimento técnico consegue pular a tela. Quem protege de verdade as tarefas é o repositório privado de dados: sem um token com acesso a ele, ninguém lê nem grava o `board.json`.
 
 Para trocar uma senha ou criar um usuário (atualiza os dois arquivos de hash; depois faça commit e push de `src/auth/static-users.json`):
 
@@ -43,17 +44,16 @@ npm run user:password -- maria "Maria Souza"              # cria um usuário nov
 
 ## Sincronização das tarefas
 
-As tarefas ficam sempre salvas no navegador (funciona offline) e são espelhadas em `data/board.json` deste repositório privado, pela API do GitHub:
+As tarefas ficam sempre salvas no navegador (funciona offline) e são espelhadas no `board.json` do repositório privado `roboyell-kanban-data`, pela API do GitHub:
 
 - cada alteração é enviada ~1,5 s depois de feita (um commit "Atualiza quadro (Nome)");
 - as alterações da outra pessoa chegam a cada 15 s, ao voltar para a aba ou ao reconectar;
-- se os dois editarem ao mesmo tempo, os quadros são mesclados tarefa a tarefa: vale a edição mais recente, e exclusões não "ressuscitam";
-- commits em `data/**` não disparam novo deploy do site.
+- se os dois editarem ao mesmo tempo, os quadros são mesclados tarefa a tarefa: vale a edição mais recente, e exclusões não "ressuscitam".
 
 Para ativar, cada pessoa clica no indicador de sincronização no cabeçalho (ou em Menu → Sincronização com GitHub) e cola um token **uma vez** por navegador:
 
-- **Guilherme (dono):** [token refinado](https://github.com/settings/personal-access-tokens/new) com acesso só a `guilhermedallm4/roboyell-kanban` e permissão *Contents: Read and write*.
-- **Pedro (colaborador):** aceite o convite do repositório e crie um [token clássico com escopo `repo`](https://github.com/settings/tokens/new?scopes=repo&description=Roboyell%20Kanban). Tokens refinados não acessam repositórios de outra conta.
+- **Guilherme (dono):** [token refinado](https://github.com/settings/personal-access-tokens/new) com acesso só a `guilhermedallm4/roboyell-kanban-data` e permissão *Contents: Read and write*.
+- **Pedro (colaborador):** aceite o convite do repositório `roboyell-kanban-data` e crie um [token clássico com escopo `repo`](https://github.com/settings/tokens/new?scopes=repo&description=Roboyell%20Kanban). Tokens refinados não acessam repositórios de outra conta.
 
 Na primeira conexão, o navegador adota o quadro compartilhado. Se o arquivo ainda não existir, o quadro desse navegador vira o compartilhado.
 
@@ -78,11 +78,10 @@ src/
   lib/classifier.ts       classificador (léxico ponderado + aprendizado por correções)
   lib/meta.ts             status, severidades, tipos, equipes e responsáveis
   hooks/useBoard.ts       estado do quadro (reducer + localStorage)
-  sync/                   sincronização com data/board.json (API do GitHub + mesclagem)
+  sync/                   sincronização com o board.json do repositório de dados (API do GitHub + mesclagem)
   auth/                   login: servidor (api.ts) ou navegador (staticAuth.ts)
   components/             Board, Column, TaskCard, TaskModal, LoginScreen, SyncDialog…
 server/                   API de login do modo local e script de senhas
-data/board.json           quadro compartilhado (gravado pelo app)
 .github/workflows/        deploy no GitHub Pages
 ```
 
