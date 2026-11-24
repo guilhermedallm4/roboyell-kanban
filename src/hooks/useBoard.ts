@@ -131,9 +131,10 @@ function loadInitial(): BoardState {
       if (parsed) return parsed;
     }
   } catch {
-    /* storage unavailable or corrupt — fall back to seed */
+    /* storage unavailable or corrupt — start empty */
   }
-  return createSeedState();
+  // A new browser starts empty; once sync is connected it adopts the shared board.
+  return { tasks: {}, columns: EMPTY_COLUMNS(), deleted: {}, updatedAt: 0, seq: 0 };
 }
 
 export function useBoard() {
