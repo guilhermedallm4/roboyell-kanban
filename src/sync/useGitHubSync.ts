@@ -20,7 +20,7 @@ interface SyncMeta {
   synced: string | null;
 }
 
-const fingerprint = (s: BoardState) => JSON.stringify([s.tasks, s.columns, s.deleted ?? {}]);
+const fingerprint = (s: BoardState) => JSON.stringify([s.tasks, s.columns, s.deleted ?? {}, s.seq ?? 0]);
 
 function storageGet(key: string): string | null {
   try {

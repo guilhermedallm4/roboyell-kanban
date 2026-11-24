@@ -8,6 +8,8 @@ export type FieldSource = 'auto' | 'manual';
 
 export interface Task {
   id: string;
+  /** Sequential, human-friendly number shown as #12. Never reused. */
+  number?: number;
   title: string;
   description: string;
   severity: Severity;
@@ -29,6 +31,8 @@ export interface BoardState {
   deleted?: Record<string, number>;
   /** Last local change to the board (used to pick column ordering when merging). */
   updatedAt?: number;
+  /** Highest task number handed out so far (survives deletions, so numbers are never reused). */
+  seq?: number;
 }
 
 export interface Filters {
@@ -38,4 +42,4 @@ export interface Filters {
   types: TaskType[];
 }
 
-export type TaskDraft = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
+export type TaskDraft = Omit<Task, 'id' | 'number' | 'createdAt' | 'updatedAt'>;

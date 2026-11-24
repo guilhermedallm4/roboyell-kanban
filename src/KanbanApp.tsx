@@ -64,6 +64,9 @@ export default function KanbanApp({ user, onLogout }: KanbanAppProps) {
       if (filters.severities.length && !filters.severities.includes(t.severity)) return false;
       if (filters.types.length && !filters.types.includes(t.type)) return false;
       if (normalizedQuery) {
+        // "#12" or "12" finds task number 12.
+        const num = /^#?(\d+)$/.exec(filters.query.trim());
+        if (num && t.number === Number(num[1])) return true;
         const hay = normalize(`${t.title} ${t.description} ${t.assignee ?? ''} ${TEAM_BY_ID[t.team].label}`);
         return normalizedQuery.split(' ').every((w) => hay.includes(w));
       }

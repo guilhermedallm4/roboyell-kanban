@@ -5,6 +5,7 @@ import { CalendarClock, Sparkles } from 'lucide-react';
 import type { Task } from '../types';
 import { SEVERITY_BY_ID, TEAM_BY_ID, TYPE_BY_ID } from '../lib/meta';
 import { dueLabel, initials } from '../lib/format';
+import { taskCode } from '../lib/numbering';
 
 interface CardBodyProps {
   task: Task;
@@ -29,9 +30,12 @@ export const CardBody = memo(function CardBody({ task, overlay }: CardBodyProps)
           <span className="sev__dot" aria-hidden="true" />
           {severity.label}
         </span>
-        <span className="chip chip--type" style={{ '--c': type.color } as CSSProperties}>
-          <TypeIcon size={12} aria-hidden="true" />
-          {type.label}
+        <span className="card__tags">
+          <span className="chip chip--type" style={{ '--c': type.color } as CSSProperties}>
+            <TypeIcon size={12} aria-hidden="true" />
+            {type.label}
+          </span>
+          {task.number && <span className="card__num" title={`Tarefa ${taskCode(task)}`}>{taskCode(task)}</span>}
         </span>
       </header>
 
@@ -99,7 +103,7 @@ export function SortableTaskCard({ task, onOpen }: SortableTaskCardProps) {
       onKeyDown={onKeyDown}
       onClick={() => onOpen(task.id)}
       aria-roledescription="cartão arrastável"
-      aria-label={`${task.title}. Severidade ${SEVERITY_BY_ID[task.severity].label}, ${TYPE_BY_ID[task.type].label}, equipe ${TEAM_BY_ID[task.team].label}. Enter para editar, Espaço para mover.`}
+      aria-label={`${task.number ? `Tarefa ${task.number}: ` : ''}${task.title}. Severidade ${SEVERITY_BY_ID[task.severity].label}, ${TYPE_BY_ID[task.type].label}, equipe ${TEAM_BY_ID[task.team].label}. Enter para editar, Espaço para mover.`}
     >
       <CardBody task={task} />
     </div>

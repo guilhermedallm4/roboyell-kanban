@@ -50,7 +50,7 @@ export function Header({ query, onQuery, searchRef, onNew, onExport, onImport, o
           ref={searchRef}
           type="search"
           className="search__input"
-          placeholder="Buscar tarefas, responsáveis…"
+          placeholder="Buscar tarefas, #nº, responsáveis…"
           value={query}
           onChange={(e) => onQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Escape' && (onQuery(''), e.currentTarget.blur())}

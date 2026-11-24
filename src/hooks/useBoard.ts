@@ -2,6 +2,7 @@ import { useCallback, useEffect, useReducer } from 'react';
 import type { BoardState, Status, Task, TaskDraft } from '../types';
 import { ASSIGNEES, STATUSES } from '../lib/meta';
 import { EMPTY_COLUMNS, createSeedState, makeId } from '../lib/seed';
+import { assignNumbers, highestNumber } from '../lib/numbering';
 
 const STORAGE_KEY = 'roboyell-kanban:v1';
 
@@ -16,7 +17,7 @@ type Action =
 
 const TOMBSTONE_TTL_MS = 60 * 24 * 60 * 60 * 1000;
 
-function reducer(state: BoardState, action: Action): BoardState {
+export function boardReducer(state: BoardState, action: Action): BoardState {
   const next = apply(state, action);
   if (next === state || (action.type === 'replace' && !action.local)) return next;
   return { ...next, updatedAt: Date.now() };
@@ -25,9 +26,11 @@ function reducer(state: BoardState, action: Action): BoardState {
 function apply(state: BoardState, action: Action): BoardState {
   switch (action.type) {
     case 'create': {
-      const { task } = action;
+      const number = highestNumber(state) + 1;
+      const task: Task = { ...action.task, number };
       return {
         ...state,
+        seq: number,
         tasks: { ...state.tasks, [task.id]: task },
         columns: { ...state.columns, [task.status]: [task.id, ...state.columns[task.status]] },
       };
@@ -35,7 +38,7 @@ function apply(state: BoardState, action: Action): BoardState {
     case 'update': {
       const prev = state.tasks[action.id];
       if (!prev) return state;
-      const next: Task = { ...prev, ...action.patch, updatedAt: Date.now() };
+      const next: Task = { ...prev, ...action.patch, number: prev.number, updatedAt: Date.now() };
       let columns = state.columns;
       if (next.status !== prev.status) {
         columns = {
@@ -82,7 +85,8 @@ function apply(state: BoardState, action: Action): BoardState {
       const now = Date.now();
       const deleted = { ...state.deleted, ...action.state.deleted };
       for (const id of Object.keys(state.tasks)) if (!action.state.tasks[id]) deleted[id] = now;
-      return { ...action.state, deleted };
+      // Keep counting from the highest number seen so a reset or import never reuses numbers.
+      return assignNumbers({ ...action.state, deleted, seq: Math.max(highestNumber(state), action.state.seq ?? 0) });
     }
   }
 }
@@ -115,7 +119,8 @@ export function sanitizeState(raw: unknown): BoardState | null {
   for (const [id, at] of Object.entries(r.deleted ?? {})) {
     if (typeof at === 'number' && at > cutoff && !r.tasks[id]) deleted[id] = at;
   }
-  return { tasks: r.tasks, columns, deleted, updatedAt: typeof r.updatedAt === 'number' ? r.updatedAt : 0 };
+  const seq = typeof r.seq === 'number' && r.seq > 0 ? Math.floor(r.seq) : 0;
+  return assignNumbers({ tasks: r.tasks, columns, deleted, updatedAt: typeof r.updatedAt === 'number' ? r.updatedAt : 0, seq });
 }
 
 function loadInitial(): BoardState {
@@ -132,7 +137,7 @@ function loadInitial(): BoardState {
 }
 
 export function useBoard() {
-  const [state, dispatch] = useReducer(reducer, undefined, loadInitial);
+  const [state, dispatch] = useReducer(boardReducer, undefined, loadInitial);
 
   useEffect(() => {
     try {

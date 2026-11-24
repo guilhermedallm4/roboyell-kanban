@@ -59,6 +59,7 @@ Na primeira conexão, o navegador adota o quadro compartilhado. Se o arquivo ain
 
 ## Funcionalidades
 
+- **Numeração sequencial** (#1, #2, …) em cada tarefa. Números de tarefas excluídas não são reaproveitados, e se os dois criarem tarefas ao mesmo tempo offline, a mais nova recebe o próximo número livre na sincronização. Busque por `#12` para achar uma tarefa.
 - **Cards** com título, descrição, severidade (Baixa → Crítica), tipo (Feature, Bugfix, Melhoria, Refatoração, Pesquisa/PoC, Documentação, Manutenção), status, equipe, responsável (Guilherme Lima ou Pedro Rosa) e prazo.
 - **Colunas**: Backlog → Em análise → A fazer → Em execução → Em revisão/QA → Concluído, com limite de WIP em "Em execução" (5) e "Em revisão" (4).
 - **Arrastar e soltar** com mouse, toque ou teclado: foque um card, aperte `Espaço`, use as setas `←/→` para trocar de coluna e `↑/↓` para trocar de posição, e `Espaço` para soltar.
@@ -76,6 +77,7 @@ Inteligência Artificial · Front-End · Back-End · DevOps & Infra · Embarcado
 ```
 src/
   lib/classifier.ts       classificador (léxico ponderado + aprendizado por correções)
+  lib/numbering.ts        numeração sequencial das tarefas (#1, #2, …)
   lib/meta.ts             status, severidades, tipos, equipes e responsáveis
   hooks/useBoard.ts       estado do quadro (reducer + localStorage)
   sync/                   sincronização com o board.json do repositório de dados (API do GitHub + mesclagem)

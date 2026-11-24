@@ -6,6 +6,7 @@ import { classifyTeam, suggestSeverity, suggestType, type FeedbackModel } from '
 import { relativeTime } from '../lib/format';
 import { ChoiceGroup } from './ChoiceGroup';
 import { ClassifierPanel } from './ClassifierPanel';
+import { taskCode } from '../lib/numbering';
 
 export type ModalState = { mode: 'create'; status: Status } | { mode: 'edit'; task: Task };
 
@@ -26,7 +27,7 @@ export function TaskModal({ state, feedbackModel, onSave, onDelete, onClose }: T
   const isEdit = state.mode === 'edit';
   const initial = useMemo<TaskDraft>(() => {
     if (state.mode === 'create') return blankDraft(state.status);
-    const { id: _id, createdAt: _c, updatedAt: _u, ...rest } = state.task;
+    const { id: _id, number: _n, createdAt: _c, updatedAt: _u, ...rest } = state.task;
     return { assignee: '', dueDate: '', ...rest };
   }, [state]);
 
@@ -151,7 +152,10 @@ export function TaskModal({ state, feedbackModel, onSave, onDelete, onClose }: T
         <form onSubmit={submit} noValidate>
           <header className="dialog__head">
             <div>
-              <h2 id={ids.heading}>{isEdit ? 'Editar tarefa' : 'Nova tarefa'}</h2>
+              <h2 id={ids.heading}>
+                {state.mode === 'edit' ? 'Editar tarefa' : 'Nova tarefa'}
+                {state.mode === 'edit' && state.task.number && <span className="dialog__num">{taskCode(state.task)}</span>}
+              </h2>
               {isEdit && state.mode === 'edit' && (
                 <p className="dialog__sub">Criada {relativeTime(state.task.createdAt)} · atualizada {relativeTime(state.task.updatedAt)}</p>
               )}

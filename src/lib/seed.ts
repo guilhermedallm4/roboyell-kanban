@@ -1,4 +1,5 @@
 import type { BoardState, Status, Task, TaskDraft } from '../types';
+import { assignNumbers } from './numbering';
 import { classifyTeam } from './classifier';
 
 const DAY = 86_400_000;
@@ -104,5 +105,5 @@ export function createSeedState(): BoardState {
     tasks[id] = { ...item, id, team, teamSource: item.teamSource ?? 'auto', createdAt: now - i * 3_600_000, updatedAt: now };
     columns[item.status].push(id);
   });
-  return { tasks, columns };
+  return assignNumbers({ tasks, columns });
 }

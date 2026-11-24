@@ -1,5 +1,6 @@
 import type { BoardState, Status, Task } from '../types';
 import { STATUSES } from '../lib/meta';
+import { assignNumbers } from '../lib/numbering';
 
 /**
  * Two-way merge of boards edited in different browsers.
@@ -7,6 +8,8 @@ import { STATUSES } from '../lib/meta';
  * - A deletion (tombstone) wins over any edit made before it.
  * - Column order comes from whichever board changed last; tasks it doesn't know about are
  *   placed where the other board had them.
+ * - Task numbers stay unique: if both browsers created a task with the same number offline, the
+ *   newer task is renumbered (see assignNumbers).
  */
 export function mergeBoards(local: BoardState, remote: BoardState): BoardState {
   const deleted: Record<string, number> = { ...remote.deleted };
@@ -40,5 +43,11 @@ export function mergeBoards(local: BoardState, remote: BoardState): BoardState {
     placed.add(task.id);
   }
 
-  return { tasks, columns, deleted, updatedAt: Math.max(local.updatedAt ?? 0, remote.updatedAt ?? 0) };
+  return assignNumbers({
+    tasks,
+    columns,
+    deleted,
+    updatedAt: Math.max(local.updatedAt ?? 0, remote.updatedAt ?? 0),
+    seq: Math.max(local.seq ?? 0, remote.seq ?? 0),
+  });
 }
